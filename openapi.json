@@ -1,0 +1,461 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition for workflow engine.",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/biz/{operator}/items": {
+      "post": {
+        "tags": [
+          "workitem"
+        ],
+        "summary": "start a new workitem with biz object associated.",
+        "description": "start a new workitem with current operator , item desc and associated biz obj",
+        "operationId": "startNewWorkItem",
+        "parameters": [
+          {
+            "name": "operator",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workitemName",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Case1Vo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/{operator}/pendingItemSteps/{stepId}/reject": {
+      "patch": {
+        "tags": [
+          "workitem step"
+        ],
+        "summary": "reject workitem step.",
+        "description": "reject item step, mark it failed.",
+        "operationId": "rejectItemStepBy",
+        "parameters": [
+          {
+            "name": "operator",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/{operator}/pendingItemSteps/{stepId}/process": {
+      "patch": {
+        "tags": [
+          "workitem step"
+        ],
+        "summary": "process workitem step.",
+        "description": "process item step, mark it processed, and move over to next steps.",
+        "operationId": "processItemStepBy",
+        "parameters": [
+          {
+            "name": "operator",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/{workitem}/steps": {
+      "get": {
+        "tags": [
+          "workitem step"
+        ],
+        "summary": "all item steps under a workitem.",
+        "description": "show all item steps within a specified workitem.",
+        "operationId": "getStepsByWorkItemId",
+        "parameters": [
+          {
+            "name": "workitem",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkItemStep"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/{workitemId}": {
+      "get": {
+        "tags": [
+          "workitem"
+        ],
+        "summary": "show workitem detail by Id",
+        "description": "show workitem by workitemId.",
+        "operationId": "getItemById",
+        "parameters": [
+          {
+            "name": "workitemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/{operator}/workitems": {
+      "get": {
+        "tags": [
+          "workitem"
+        ],
+        "summary": "show workitems created by operator.",
+        "description": "show workitems created by operator.",
+        "operationId": "itemsCreatedBy",
+        "parameters": [
+          {
+            "name": "operator",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/{operator}/pendingItemSteps": {
+      "get": {
+        "tags": [
+          "workitem step"
+        ],
+        "summary": "show pending itemstep for an operator.",
+        "description": "show all item steps which is pending on specified operator",
+        "operationId": "getPendingItemStepBy",
+        "parameters": [
+          {
+            "name": "operator",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkItemStep"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/biz/{workitemId}/associatedObj": {
+      "get": {
+        "tags": [
+          "workitem"
+        ],
+        "summary": "show associated biz Object  by workitemId",
+        "description": "show associated Biz Object by workitemId.",
+        "operationId": "getAssociatedBizObjByWorkItemId",
+        "parameters": [
+          {
+            "name": "workitemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Case1Vo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Case1Vo": {
+        "type": "object",
+        "properties": {
+          "bid": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkItem": {
+        "type": "object",
+        "properties": {
+          "workItemId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "lastUpdateTs": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSED",
+              "REJECTED",
+              "FINISHED",
+              "FAIL"
+            ]
+          },
+          "memo": {
+            "type": "string"
+          },
+          "routePolicy": {
+            "type": "string"
+          },
+          "routePolicyMeta": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkItemStep"
+            }
+          }
+        }
+      },
+      "WorkItemStep": {
+        "type": "object",
+        "properties": {
+          "stepId": {
+            "type": "string"
+          },
+          "workItemId": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "receivedTs": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "processedTs": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSED",
+              "REJECTED",
+              "FINISHED",
+              "FAIL"
+            ]
+          },
+          "memo": {
+            "type": "string"
+          },
+          "preSid": {
+            "type": "string"
+          },
+          "autoChecker": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
